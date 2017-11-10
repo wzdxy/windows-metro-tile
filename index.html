@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 容器 */
+
+        .tile-wrapper {
+            background-color: #222;
+            width: 800px;
+            display: grid;
+            display: -ms-grid;
+            grid-template-columns: repeat(16, 50px);
+            grid-template-rows: repeat(8, 50px);
+            -ms-grid-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
+            grid-auto-rows: 50px;
+            -ms-grid-rows: 50px 50px 50px 50px 50px 50px 50px 50px;
+        }
+
+        /* 单个磁贴样式 */
+
+        .tile-wrapper .tile-item {
+            transition: margin,opacity 0.2s;
+            position: relative;
+            background-color: #0078d7;
+            border: 2px solid transparent;
+            margin: 2px;
+            color: #ffffff;
+        }
+
+        .tile-item:hover {
+            border-color: #7fbbeb;
+        }
+
+        .tile-item.is-dragging {
+            z-index: 1000;
+            border-color: transparent;
+            padding: 4px;
+        }
+
+        /* 拖拽时淡化其他磁贴 */
+
+        .tile-wrapper.is-dragging .tile-item:not(.is-dragging) {
+            margin: 6px;
+            opacity: 0.5;
+            zoom:0.95;
+        }
+
+        /* 拖拽手柄 */
+
+        .handle {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            cursor: pointer;
+            display: none;
+            text-align: center;
+        }
+
+        .handle:hover {
+            background-color: rgb(31, 67, 226);
+        }
+
+        .tile-item.is-dragging .handle {
+            background-color: rgb(31, 67, 226);
+        }
+
+        /* 鼠标悬浮时显示磁贴 */
+
+        .tile-item:hover .handle {
+            display: inline-block;
+        }
+
+        /* 磁贴图标 */
+
+        .tile-item i.icon {
+            left: calc(50% - 11px);
+            top: 30%;
+            position: absolute;
+        }
+
+        .tile-wrapper .tile-item.medium i.icon {
+            font-size: 30px;
+            left: calc(50% - 15px);
+        }
+
+        .tile-wrapper .tile-item.large i.icon {
+            font-size: 46px;
+            left: calc(50% - 23px);
+        }
+
+        .tile-wrapper .tile-item.wide i.icon {
+            font-size: 36px;
+            left: calc(50% - 18px);
+        }
+
+        .tile-wrapper .tile-item.small i.icon {
+            font-size: 18px;
+            left: calc(50% - 9px);
+        }
+
+        /* 磁贴底部文字 */
+
+        .tile-item .name {
+            bottom: 3px;
+            left: 3px;
+            font-size: 12px;
+            text-align: center;
+            max-height: 32px;
+            overflow: hidden;
+            position: absolute;
+        }
+
+        /* 小磁贴不显示文字 */
+
+        .tile-wrapper .tile-item.small .name {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tile-wrapper"></div>
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+    <script src="https://unpkg.com/draggabilly@2/dist/draggabilly.pkgd.min.js"></script>    
+    <script>
+        var menu = [
+            {
+                title: '用户管理1用户管理2用户管理3用户管理4用户管理',
+                size: 'medium',
+                bgColor: '',
+                textColor: '',
+                icon: 'user',
+                row: 1,
+                col: 1,
+            },
+            {
+                title: '日志管理',
+                size: 'small',
+                bgColor: '',
+                textColor: '',
+                icon: 'file',
+                row: 1,
+                col: 4,
+            },
+            {
+                title: '系统设置',
+                size: 'large',
+                bgColor: '',
+                textColor: '',
+                icon: 'cubes',
+                row: 3,
+                col: 4,
+            },
+            {
+                title: '高级管理',
+                size: 'medium',
+                bgColor: '',
+                textColor: '',
+                icon: 'cube',
+                row: 5,
+                col: 10,
+            }
+        ]
+
+        menu.forEach(function (item, index) {
+            var rowSpan = 2, colSpan = 2;
+            switch (item.size) {
+                case 'medium': {
+                    break;
+                }
+                case 'small': {
+                    rowSpan = 1; colSpan = 1; break;
+                }
+                case 'large': {
+                    rowSpan = 4; colSpan = 4; break;
+                }
+            }
+            var $item = $('<div class="tile-item ' + item.size + '">' +
+                '<i class="icon fa fa-' + item.icon + '"></i>' +
+                '<div class="name">' + item.title + '</div>' +
+                '<div class="handle">=</div>' +
+                '</div>')
+            $item.css({
+                "grid-row": item.row + "/" + (item.row + rowSpan),
+                "grid-column": item.col + "/" + (item.col + colSpan),
+                "-ms-grid-row": String(item.row),
+                "-ms-grid-row-span": String(rowSpan),
+                "-ms-grid-column": String(item.col),
+                "-ms-grid-column-span": String(colSpan),
+            })
+            $('.tile-wrapper').append($item);
+        })
+
+
+
+
+        var $draggable = $('.tile-item').draggabilly({
+            // grid: [ 50, 50 ],
+            containment: '.tile-wrapper',
+            handle: '.handle',
+        })
+
+        $draggable.on('dragStart', function (e, pointer) {
+            $('.tile-wrapper').addClass('is-dragging');
+        })
+
+        $draggable.on('dragEnd', function (e, pointer) {
+            $('.tile-wrapper').removeClass('is-dragging');
+            $(e.target).css({ 'left': 0, 'top': 0 })
+        })
+
+    </script>
+</body>
+
+</html>
