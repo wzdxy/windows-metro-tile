@@ -7,10 +7,10 @@
 
 .tile-wrapper {
     background-color: #222;
-    width: 800px;
-    display: grid;
+    width: 600px;
+    display: inline-grid;
     display: -ms-grid;
-    grid-template-columns: repeat(16, 50px);
+    grid-template-columns: repeat(12, 50px);
     grid-template-rows: repeat(8, 50px);
     -ms-grid-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
     grid-auto-rows: 50px;
@@ -28,6 +28,10 @@
     color: #ffffff;
 }
 
+.tile-item .name{
+
+}
+
 .tile-item:hover {
     border-color: #7fbbeb;
 }
@@ -36,6 +40,14 @@
     z-index: 1000;
     border-color: transparent;
     padding: 4px;
+    cursor: move;
+}
+
+.tile-item>a{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: inline-block;
 }
 
 /* 拖拽时淡化其他磁贴 */
@@ -54,7 +66,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    cursor: pointer;
+    cursor: move;
     display: none;
     text-align: center;
 }
@@ -79,6 +91,7 @@
     left: calc(50% - 11px);
     top: 30%;
     position: absolute;
+    color:#fff;
 }
 
 .tile-wrapper .tile-item.medium i.icon {
@@ -111,6 +124,7 @@
     max-height: 32px;
     overflow: hidden;
     position: absolute;
+    color:white;
 }
 
 /* 小磁贴不显示文字 */

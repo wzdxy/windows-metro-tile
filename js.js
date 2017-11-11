@@ -1,9 +1,10 @@
 window.onload=function(){
-    appendItemToTile([
+    appendItemToGroup([
         {
-            title: '用户管理1用户管理2用户管理3用户管理4用户管理',
+            title: '用户管理1',
+            href:'user',
             size: 'medium',
-            bgColor: '',
+            background: '',
             textColor: '',
             iconColor: '',
             icon: 'user',
@@ -11,9 +12,10 @@ window.onload=function(){
             col: 1,
         },
         {
-            title: '日志管理',
+            title: '日志管理1',
+            href:'log',
             size: 'small',
-            bgColor: '',
+            background: '',
             textColor: '',
             iconColor: '',
             icon: 'file',
@@ -21,9 +23,10 @@ window.onload=function(){
             col: 4,
         },
         {
-            title: '系统设置',
+            title: '系统设置1',
+            href:'setting',
             size: 'large',
-            bgColor: '',
+            background: '',
             textColor: '',
             iconColor: '',
             icon: 'cubes',
@@ -31,20 +34,67 @@ window.onload=function(){
             col: 4,
         },
         {
-            title: '高级管理',
+            title: '高级管理1',
+            href:'adv',
             size: 'medium',
-            bgColor: '',
+            background: 'green',
             textColor: '',
             iconColor: '',
             icon: 'cube',
             row: 5,
             col: 10,
         }
-    ]);
+    ],$('.tile-wrapper')[0]);
+    appendItemToGroup([
+        {
+            title: '用户管理2',
+            href:'user',
+            size: 'medium',
+            background: 'gray',
+            textColor: '',
+            iconColor: '',
+            icon: 'user',
+            row: 1,
+            col: 1,
+        },
+        {
+            title: '日志管理2',
+            href:'log',
+            size: 'small',
+            background: '',
+            textColor: '',
+            iconColor: '',
+            icon: 'file',
+            row: 1,
+            col: 4,
+        },
+        {
+            title: '系统设置2',
+            href:'setting',
+            size: 'large',
+            background: '',
+            textColor: '',
+            iconColor: '',
+            icon: 'cubes',
+            row: 3,
+            col: 4,
+        },
+        {
+            title: '高级管理2',
+            href:'adv',
+            size: 'medium',
+            background: 'green',
+            textColor: '',
+            iconColor: '',
+            icon: 'cube',
+            row: 5,
+            col: 10,
+        }
+    ],$('.tile-wrapper')[1]);
     initDraggable();
 }
 
-function appendItemToTile(menu){        
+function appendItemToGroup(menu,$group){        
     menu.forEach(function (item, index) {
         var rowSpan = 2, colSpan = 2;
         switch (item.size) {
@@ -58,9 +108,11 @@ function appendItemToTile(menu){
                 rowSpan = 4; colSpan = 4; break;
             }
         }
-        var $item = $('<div class="tile-item ' + item.size + '">' +
-            '<i class="icon fa fa-' + item.icon + '"></i>' +
-            '<div class="name">' + item.title + '</div>' +
+        var $item = $('<div class="tile-item ' + item.size + '"  style="'+(item.background?"background:"+item.background:'')+'">' +
+            '<a href="'+item.href+'">'+
+                '<i class="icon fa fa-' + item.icon + '" style="'+(item.iconColor?"color:"+item.iconColor:'')+'"></i>' +
+                '<div class="name" style="'+(item.textColor?"color:"+item.textColor:'')+'">' + item.title + '</div>' +            
+            '</a>'+
             '<div class="handle">=</div>' +
             '</div>')
         $item.css({
@@ -71,13 +123,13 @@ function appendItemToTile(menu){
             "-ms-grid-column": String(item.col),
             "-ms-grid-column-span": String(colSpan),
         })
-        $('.tile-wrapper').append($item);
+        $($group).append($item);
     })
 }
 
 function initDraggable(){
     var $draggable = $('.tile-item').draggabilly({
-        containment: '.tile-wrapper',
+        // containment: '.tile-wrapper',
         handle: '.handle',
     })
     
