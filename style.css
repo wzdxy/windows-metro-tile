@@ -7,12 +7,12 @@
 
 .tile-wrapper {
     background-color: #222;
-    width: 600px;
+    /* width: 600px; */
     display: inline-grid;
-    display: -ms-grid;
+    display: -ms-inline-grid;
     grid-template-columns: repeat(12, 50px);
     grid-template-rows: repeat(8, 50px);
-    -ms-grid-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
+    -ms-grid-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
     grid-auto-rows: 50px;
     -ms-grid-rows: 50px 50px 50px 50px 50px 50px 50px 50px;
 }
@@ -72,11 +72,11 @@
 }
 
 .handle:hover {
-    background-color: rgb(31, 67, 226);
+    /* background-color: rgb(31, 67, 226); */
 }
 
 .tile-item.is-dragging .handle {
-    background-color: rgb(31, 67, 226);
+    /* background-color: rgb(31, 67, 226); */
 }
 
 /* 鼠标悬浮时显示磁贴 */
