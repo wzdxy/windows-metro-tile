@@ -4,10 +4,13 @@
 }
 
 /* 容器 */
-
+.tile-group{
+    display: inline-block;
+    padding: 0 10px;
+    border:1px solid #333;
+}
 .tile-wrapper {
-    background-color: #222;
-    /* width: 600px; */
+    /*background-color: #222;*/
     display: inline-grid;
     display: -ms-inline-grid;
     grid-template-columns: repeat(12, 50px);
@@ -15,6 +18,13 @@
     -ms-grid-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
     grid-auto-rows: 50px;
     -ms-grid-rows: 50px 50px 50px 50px 50px 50px 50px 50px;
+}
+
+/* group 标题 */
+.tile-group-title{
+    /*background-color: #222222;*/
+    color: #ffffff;
+    padding:15px 0;
 }
 
 /* 单个磁贴样式 */
