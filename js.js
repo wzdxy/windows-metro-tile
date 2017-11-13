@@ -1,4 +1,22 @@
 window.onload=function(){
+    window.gridConfig={
+        gridWidth:50
+    }
+    window.groups=[
+        {
+            name:'',
+            tiles:[],
+            ele:null,            
+            size:{col:12,row:9},
+            grids:[
+                [
+                    {tile:null},{tile:null},{tile:null},{tile:null},
+                ],[
+                    {tile:null},{tile:null},{tile:null},{tile:null},
+                ],[],[]
+            ]
+        }
+    ]
     appendItemToGroup([
         {
             title: '用户管理1',
@@ -140,5 +158,10 @@ function initDraggable(){
     $draggable.on('dragEnd', function (e, pointer) {
         $('.tile-wrapper').removeClass('is-dragging');
         $(e.target).css({ 'left': 0, 'top': 0 })
+    })
+
+    $draggable.on('dragMove',function (e, pointer,vector){
+        console.log(arguments);
+        
     })
 }
