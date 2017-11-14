@@ -1,9 +1,11 @@
-function MetroGroups(selector, groups, config) {
+function MetroGroups(selector, configs) {
     this.selector = selector;
     this.wrapper = $(selector);
-    this.groups = groups;
-    this.config = config;
-    this.tiles=[];
+    this.defaultConfig=configs;
+    const config=this.getConfigFromLocalStorage() || configs;   // 如果有本地数据就读本地的
+    this.groups = config.groups;
+    this.options = config.options;
+
     this.init();
 }
 
@@ -12,17 +14,28 @@ MetroGroups.prototype = {
      * 初始化
      */
     init: function () {
-        this.initTileGroups($('#main-wrapper'), groups, {gridWidth: 50});
+        this.tiles=[];
+        this.initTileGroups(this.groups, this.options);
         this.initDraggable();
     },
 
     /**
+     * 恢复默认配置
+     */
+    reset: function () {
+        this.groups=this.defaultConfig.groups;
+        this.options=this.defaultConfig.options;
+        this.init();
+        this.saveConfigToLocalStorage();
+    },
+    
+    /**
      * 生成 group 容器
-     * @param $wrapper  容器 $jquery 对象
      * @param groups    {Array} group 数据
      * @param config    {Object} 网格整体配置
      */
-    initTileGroups: function ($wrapper, groups, config) {
+    initTileGroups: function (groups, config) {
+        this.wrapper.empty();
         groups.forEach(function (group,index) {
             const $group = $(
                 '<div class="tile-group" >' +
@@ -39,6 +52,7 @@ MetroGroups.prototype = {
             $group.attr({
                 'data-group-index':index
             })
+            group.grids=[];
             for (let row = 0; row < group.size.row; row++) {
                 group.grids[row] = [];
                 for (let col = 0; col < group.size.col; col++) {
@@ -47,7 +61,7 @@ MetroGroups.prototype = {
             }
             this.appendItemToGroup($group.find('.tile-wrapper'), group.tiles, group.grids,index);
             this.initContextMenu()
-            $wrapper.append($group)
+            this.wrapper.append($group)
             group.ele = $group
         }.bind(this))
     },
@@ -109,7 +123,7 @@ MetroGroups.prototype = {
     initDraggable :function () {
         let $draggable = $('.tile-item').draggabilly({
             containment: true,
-            handle: '.handle',
+            // handle: '.handle',
         })
 
         $draggable.on('dragStart', function (e, pointer) {
@@ -126,8 +140,8 @@ MetroGroups.prototype = {
             let tile=this.tiles.filter(function (item) {return item.id===tileId});
             if(tile.length)tile=tile[0];
             else console.error('在 tile 中没找到这个 id : '+tileId,this.tiles);
-            let curRow=tile.row + Math.round(vector.y/this.config.gridWidth);
-            let curCol=tile.col + Math.round(vector.x/this.config.gridWidth);
+            let curRow=tile.row + Math.round(vector.y/this.options.gridWidth);
+            let curCol=tile.col + Math.round(vector.x/this.options.gridWidth);
 
             // 判断出界
             if(curRow<=0 || curCol<=0 || curRow+tile.rowSpan > tile.group.size.row+1 || curCol+tile.colSpan > tile.group.size.col+1)
@@ -156,6 +170,7 @@ MetroGroups.prototype = {
             newGrids.forEach(function (item,index,array) {
                 item.tile=tile;
             })
+            tile.freshConfigInGroup();
 
         }.bind(this))
 
@@ -176,8 +191,8 @@ MetroGroups.prototype = {
     getCurCR:function (ele,vector) {
         let tileId=$(ele).attr('data-tile-id');
         let tile = this.getTileObjById(tileId);
-        let curRow=tile.row + Math.round(vector.y/this.config.gridWidth);
-        let curCol=tile.col + Math.round(vector.x/this.config.gridWidth);
+        let curRow=tile.row + Math.round(vector.y/this.options.gridWidth);
+        let curCol=tile.col + Math.round(vector.x/this.options.gridWidth);
         return {
             curRow:curRow,curCol:curCol,
             oldRow:tile.row,oldCol:tile.col
@@ -212,9 +227,32 @@ MetroGroups.prototype = {
             for(let j=startColIndex;j<endColIndex;j++){
                 grids.push(group.grids[i][j])
             }
-
         }
         return grids
-    }
+    },
 
+    saveConfigToLocalStorage:function () {
+        let config={
+            groups:this.groups.map(function (item) {
+                return {
+                    title:item.title,
+                    size:item.size,
+                    tiles:item.tiles
+                }
+            }),
+            options:this.options,
+        }
+        localStorage.setItem('metro'+this.selector,JSON.stringify(config));
+    },
+    
+    getConfigFromLocalStorage:function () {
+        const config=localStorage.getItem('metro'+this.selector)
+        if(config){
+            console.log('metro'+this.selector,'从 local 获取到数据')
+            return JSON.parse(config)
+        }else {
+            console.log('metro'+this.selector,'使用默认配置的数据')
+            return false
+        }
+    }
 }

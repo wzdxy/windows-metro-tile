@@ -1,9 +1,8 @@
 const groups=[
     {
         title:'Aa',
-        ele:null,
+        // ele:null,
         size:{col:12,row:9},
-        grids:[],
         tiles:[
             {
                 title: '用户管理1',
@@ -20,7 +19,7 @@ const groups=[
                 title: '日志管理1',
                 href:'log',
                 size: 'medium',
-                background: '',
+                background: '#107C10',
                 textColor: '',
                 iconColor: '',
                 icon: 'file',
@@ -52,9 +51,8 @@ const groups=[
         ]
     },{
         title:'Bb',
-        ele:null,
+        // ele:null,
         size:{col:12,row:9},
-        grids:[],
         tiles: [
             {
                 title: '用户管理2',
@@ -103,9 +101,8 @@ const groups=[
         ]
     }, {
         title:'Cc',
-        ele:null,
+        // ele:null,
         size:{col:12,row:9},
-        grids:[],
         tiles: [
             {
                 title: '用户管理3',
@@ -121,9 +118,8 @@ const groups=[
         ]
     }, {
         title:'Dd',
-        ele:null,
+        // ele:null,
         size:{col:12,row:9},
-        grids:[],
         tiles: [
             {
                 title: '用户管理4',
