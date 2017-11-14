@@ -62,7 +62,7 @@
 .tile-item.is-dragging {
     z-index: 1000;
     border-color: transparent;
-    padding: 4px;
+    /*padding: 4px;*/
     cursor: move;
 }
 
@@ -113,22 +113,22 @@
     color:#fff;
 }
 
-.tile-wrapper .tile-item.medium i.icon {
+.tile-wrapper .tile-item.tile-medium i.icon {
     font-size: 30px;
     left: calc(50% - 15px);
 }
 
-.tile-wrapper .tile-item.large i.icon {
+.tile-wrapper .tile-item.tile-large i.icon {
     font-size: 46px;
     left: calc(50% - 23px);
 }
 
-.tile-wrapper .tile-item.wide i.icon {
+.tile-wrapper .tile-item.tile-wide i.icon {
     font-size: 36px;
     left: calc(50% - 18px);
 }
 
-.tile-wrapper .tile-item.small i.icon {
+.tile-wrapper .tile-item.tile-small i.icon {
     font-size: 18px;
     left: calc(50% - 9px);
 }
@@ -148,6 +148,6 @@
 
 /* 小磁贴不显示文字 */
 
-.tile-wrapper .tile-item.small .name {
+.tile-wrapper .tile-item.tile-small .name {
     display: none;
 }
