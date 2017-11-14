@@ -11,7 +11,7 @@ function MetroGroups($wrapper, groups, config) {
     this.init();
 }
 
-function MetroTile(config,index,group,groupIndex,) {
+function MetroTile(config,index,group,groupIndex) {
     this.row=config.row;
     this.col=config.col;
     this.rowSpan = 2;
@@ -120,7 +120,7 @@ MetroGroups.prototype = {
      */
     appendItemToGroup :function ($group, tiles, grids, groupIndex) {
         tiles.forEach(function (item, index) {
-            let tile = new MetroTile(item,index,this.groups[groupIndex],groupIndex,);
+            let tile = new MetroTile(item,index,this.groups[groupIndex],groupIndex);
             for (let row = tile.row; row < tile.row + tile.rowSpan; row++) {
                 for (let col = tile.col; col < tile.col + tile.colSpan; col++) {
                     grids[row - 1][col - 1].tile = tile;
@@ -136,15 +136,18 @@ MetroGroups.prototype = {
      */
     initDraggable :function () {
         let $draggable = $('.tile-item').draggabilly({
-            // containment: '.tile-wrapper',
+            containment: true,
             handle: '.handle',
         })
 
         $draggable.on('dragStart', function (e, pointer) {
-            $('.tile-wrapper').addClass('is-dragging');
+            $(e.target).parents('.tile-wrapper').addClass('is-dragging');
         })
 
         $draggable.on('dragEnd', function (e, pointer) {
+            // 恢复 拖拽状态 和 移动向量
+            $('.tile-wrapper').removeClass('is-dragging');
+            $(e.target).css({'left': 0, 'top': 0})
 
             // 获取当前拖拽位置的网格
             let tileId=$(e.target).attr('data-tile-id');
@@ -153,6 +156,8 @@ MetroGroups.prototype = {
             else console.error('在 tile 中没找到这个 id : '+tileId,this.tiles);
             let curRow=tile.row + Math.round(vector.y/this.config.gridWidth);
             let curCol=tile.col + Math.round(vector.x/this.config.gridWidth);
+            if(curRow<=0 || curCol<=0 || curRow+tile.rowSpan > tile.group.size.row+1 || curCol+tile.colSpan > tile.group.size.col+1)
+                return console.log('出界',curRow,curCol,curRow+tile.rowSpan,curCol+tile.colSpan);
             let curGrids=this.getGridsInArea(tile.group,curRow,curCol,curRow+tile.rowSpan,curCol+tile.colSpan)
             // 判断网格位置被占用情况
 
@@ -161,9 +166,7 @@ MetroGroups.prototype = {
             tile.col=curCol;
             tile.setTileCss();
 
-            // 恢复 拖拽状态 和 移动向量
-            $('.tile-wrapper').removeClass('is-dragging');
-            $(e.target).css({'left': 0, 'top': 0})
+
         }.bind(this))
 
         $draggable.on('dragMove', function (e, pointer, vector) {

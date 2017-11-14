@@ -4,6 +4,19 @@
 }
 
 /* 容器 */
+.metro-main{
+    padding: 10px;
+    display: inline-flex;
+    background-color: #242424;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 1300px;
+    justify-content: center;
+    align-items: center;
+    position: static;
+    margin: 0 calc(50% - 650px);
+}
+
 .tile-group{
     display: inline-block;
     padding: 0 10px;
@@ -82,10 +95,6 @@
 }
 
 .handle:hover {
-    /* background-color: rgb(31, 67, 226); */
-}
-
-.tile-item.is-dragging .handle {
     /* background-color: rgb(31, 67, 226); */
 }
 
