@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" style="height: 100%;background: #666;">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Tile</title>
+    <title>Metro Tile</title>
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/jquery-contextmenu/2.6.2/jquery.contextMenu.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="tile-wrapper"></div><div class="tile-wrapper"></div>
-    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
-    <script src="https://cdn.bootcss.com/draggabilly/2.1.1/draggabilly.pkgd.js"></script>
-    <script src="js.js"></script>
+<div style="display: inline-block;position: fixed;left: 45%;">
+    <button onclick="metro.saveConfigToLocalStorage();alert('已保存')">保存</button>
+    <button onclick="metro.reset()">恢复默认</button>
+</div>
+<div class="metro-main" id="main-wrapper" ></div>
+<script src="config.js"></script>
+<script src="pollyfill.js"></script>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+<script src="https://cdn.bootcss.com/draggabilly/2.1.1/draggabilly.pkgd.js"></script>
+<script src="https://cdn.bootcss.com/jquery-contextmenu/2.6.2/jquery.contextMenu.min.js"></script>
+<script src="groups.js"></script>
+<script src="tile.js"></script>
+<script src="js.js"></script>
 </body>
 
 </html>

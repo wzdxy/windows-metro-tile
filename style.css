@@ -4,10 +4,26 @@
 }
 
 /* 容器 */
+.metro-main{
+    padding: 10px;
+    display: inline-flex;
+    background-color: #242424;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 1300px;
+    justify-content: center;
+    align-items: center;
+    position: static;
+    margin: 0 calc(50% - 650px);
+}
 
+.tile-group{
+    display: inline-block;
+    padding: 0 10px;
+    border:1px solid #333;
+}
 .tile-wrapper {
-    background-color: #222;
-    /* width: 600px; */
+    /*background-color: #222;*/
     display: inline-grid;
     display: -ms-inline-grid;
     grid-template-columns: repeat(12, 50px);
@@ -15,6 +31,13 @@
     -ms-grid-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
     grid-auto-rows: 50px;
     -ms-grid-rows: 50px 50px 50px 50px 50px 50px 50px 50px;
+}
+
+/* group 标题 */
+.tile-group-title{
+    /*background-color: #222222;*/
+    color: #ffffff;
+    padding:15px 0;
 }
 
 /* 单个磁贴样式 */
@@ -39,7 +62,7 @@
 .tile-item.is-dragging {
     z-index: 1000;
     border-color: transparent;
-    padding: 4px;
+    /*padding: 4px;*/
     cursor: move;
 }
 
@@ -75,10 +98,6 @@
     /* background-color: rgb(31, 67, 226); */
 }
 
-.tile-item.is-dragging .handle {
-    /* background-color: rgb(31, 67, 226); */
-}
-
 /* 鼠标悬浮时显示磁贴 */
 
 .tile-item:hover .handle {
@@ -94,22 +113,22 @@
     color:#fff;
 }
 
-.tile-wrapper .tile-item.medium i.icon {
+.tile-wrapper .tile-item.tile-medium i.icon {
     font-size: 30px;
     left: calc(50% - 15px);
 }
 
-.tile-wrapper .tile-item.large i.icon {
-    font-size: 46px;
-    left: calc(50% - 23px);
+.tile-wrapper .tile-item.tile-large i.icon {
+    font-size: 60px;
+    left: calc(50% - 30px);
 }
 
-.tile-wrapper .tile-item.wide i.icon {
+.tile-wrapper .tile-item.tile-wide i.icon {
     font-size: 36px;
     left: calc(50% - 18px);
 }
 
-.tile-wrapper .tile-item.small i.icon {
+.tile-wrapper .tile-item.tile-small i.icon {
     font-size: 18px;
     left: calc(50% - 9px);
 }
@@ -129,6 +148,6 @@
 
 /* 小磁贴不显示文字 */
 
-.tile-wrapper .tile-item.small .name {
+.tile-wrapper .tile-item.tile-small .name {
     display: none;
 }
