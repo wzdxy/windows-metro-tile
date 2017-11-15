@@ -2,7 +2,7 @@ function MetroGroups(selector, configs) {
     this.selector = selector;
     this.wrapper = $(selector);
     this.defaultConfig=configs;
-    const config=this.getConfigFromLocalStorage() || configs;   // 如果有本地数据就读本地的
+    const config=this.mergeDefaultConfigWithLocalStorage() || configs;   // 如果有本地数据就读本地的
     this.groups = config.groups;
     this.options = config.options;
 
@@ -14,6 +14,7 @@ MetroGroups.prototype = {
      * 初始化
      */
     init: function () {
+        this.wrapper.addClass('metro-main');
         this.tiles=[];
         this.initTileGroups(this.groups, this.options);
         this.initDraggable();
@@ -28,7 +29,7 @@ MetroGroups.prototype = {
         this.init();
         this.saveConfigToLocalStorage();
     },
-    
+
     /**
      * 生成 group 容器
      * @param groups    {Array} group 数据
@@ -42,12 +43,21 @@ MetroGroups.prototype = {
                 '<div class="tile-group-title">' + group.title + '</div>' +
                 '<div class="tile-wrapper"></div>' +
                 '</div>')
-            $group.css({
-                'grid-template-columns': 'repeat(' + group.size.col + ', ' + config.gridWidth + 'px)',
-                'grid-template-rows': 'repeat(' + group.size.row + ', ' + config.gridWidth + 'px)',
+            let msStyleStr=function () {
+                let col='',row='', i=0;
+                while (i<group.size.col || i<group.size.row){
+                    if(i<group.size.col)col+=config.gridWidth + 'px ';
+                    if(i<group.size.row)row+=config.gridWidth + 'px ';
+                    i++;
+                }
+                return {col:col,row:row}
+            }();
+            $group.find('.tile-wrapper').css({
                 'grid-auto-rows': config.gridWidth + 'px',
-                '-ms-grid-columns': (config.gridWidth + 'px ').repeat(group.size.col),
-                '-ms-grid-rows': (config.gridWidth + 'px ').repeat(group.size.row),
+                'grid-template-columns': msStyleStr.col,
+                'grid-template-rows': msStyleStr.row,
+                '-ms-grid-columns': msStyleStr.col,
+                '-ms-grid-rows': msStyleStr.row,
             })
             $group.attr({
                 'data-group-index':index
@@ -150,9 +160,8 @@ MetroGroups.prototype = {
             // 判断目标网格位置被占用情况
             let newGrids=this.getGridsInArea(tile.group,curRow,curCol,curRow+tile.rowSpan,curCol+tile.colSpan)
             if(newGrids.some(function (item) {
-                return item.tile!==null && item.tile!==tile;
-            }))return console.log(newGrids,'被占用');
-
+                    return item.tile!==null && item.tile!==tile;
+                }))return console.log(newGrids,'被占用');
 
             // 清空旧位置
             let oldGrids=this.getGridsInArea(tile.group,tile.row,tile.col,tile.row+tile.rowSpan,tile.col+tile.colSpan)
@@ -171,7 +180,6 @@ MetroGroups.prototype = {
                 item.tile=tile;
             })
             tile.freshConfigInGroup();
-
         }.bind(this))
 
         $draggable.on('dragMove', function (e, pointer, vector) {
@@ -231,10 +239,14 @@ MetroGroups.prototype = {
         return grids
     },
 
+    /**
+     * 布局信息保存到 localStorage
+     */
     saveConfigToLocalStorage:function () {
         let config={
             groups:this.groups.map(function (item) {
                 return {
+                    id:item.id,
                     title:item.title,
                     size:item.size,
                     tiles:item.tiles
@@ -244,7 +256,11 @@ MetroGroups.prototype = {
         }
         localStorage.setItem('metro'+this.selector,JSON.stringify(config));
     },
-    
+
+    /**
+     * 从 localStorage 获取布局信息
+     * @returns {boolean}
+     */
     getConfigFromLocalStorage:function () {
         const config=localStorage.getItem('metro'+this.selector)
         if(config){
@@ -254,5 +270,55 @@ MetroGroups.prototype = {
             console.log('metro'+this.selector,'使用默认配置的数据')
             return false
         }
+    },
+
+    /**
+     * 将默认配置信息和 localStorage 合并 (用于更新配置)
+     */
+    mergeDefaultConfigWithLocalStorage:function () {
+        Array.prototype.contains = function (item,propName) {
+            for (let i = 0; i < this.length; i++) {
+                if (this[i][propName] === item[propName]) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+        let localConfig=this.getConfigFromLocalStorage()
+        if(localConfig===false)return false;
+        let newConfig={
+            groups: [],
+            options: JSON.parse(JSON.stringify(Object.assign(localConfig.options, this.defaultConfig.options))),
+        };
+        this.defaultConfig.groups.forEach(function (item) {
+            let newGroup=JSON.parse(JSON.stringify(item));
+            let oldGroupIndex=localConfig.groups.contains(newGroup,'id')    // 找到 local 中对应的组
+            if(oldGroupIndex===-1)
+                return newConfig.groups.push(newGroup); // 如果 local 中不存在 , 直接作为新增的组插入
+            let oldGroup=localConfig.groups[oldGroupIndex]; // 如果存在, 更新配置
+            let tempGroup = {
+                id:oldGroup.id,
+                title:oldGroup.title,
+                size:oldGroup.size,
+                tiles:[]
+            };
+            oldGroup.tiles.forEach(function (oldTile) {
+                let newTileIndex = newGroup.tiles.contains(oldTile,'href')    // 判断这个 tile 在新配置中是否还存在
+                if(newTileIndex===-1)
+                    return tempGroup.tiles.push(oldTile);      // tile 不存在, 不处理
+                let newTile=newGroup.tiles.splice(newTileIndex,1)[0];        // tile 存在, 合并配置并添加, 以及从 newGroup 中删除 (最终仅保留新增的)
+                tempGroup.tiles.push(Object.assign(oldTile,{
+                    title: newTile.title,
+                    background: newTile.background,
+                    textColor: newTile.textColor,
+                    iconColor: newTile.iconColor,
+                    icon: newTile.icon,
+                }));
+            })
+            tempGroup.tiles = tempGroup.tiles.concat(newGroup.tiles);
+            newConfig.groups.push(tempGroup);
+        })
+        localStorage.setItem('metro'+this.selector,JSON.stringify(newConfig))
+        return newConfig; //FIXME 重新配置 group 的 title 时, 刷新页面不会生效
     }
 }

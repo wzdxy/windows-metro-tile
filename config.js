@@ -1,11 +1,11 @@
 const groups=[
     {
-        title:'Aa',
-        // ele:null,
+        id:'g1',
+        title:'ddd',
         size:{col:12,row:9},
         tiles:[
             {
-                title: '用户管理1',
+                title: '用户管理',
                 href:'user',
                 size: 'medium',
                 background: '',
@@ -50,8 +50,8 @@ const groups=[
             }
         ]
     },{
+        id:'g2',
         title:'Bb',
-        // ele:null,
         size:{col:12,row:9},
         tiles: [
             {
@@ -100,8 +100,8 @@ const groups=[
             // }
         ]
     }, {
+        id:'g3',
         title:'Cc',
-        // ele:null,
         size:{col:12,row:9},
         tiles: [
             {
@@ -117,8 +117,8 @@ const groups=[
             },
         ]
     }, {
+        id:'g4',
         title:'Dd',
-        // ele:null,
         size:{col:12,row:9},
         tiles: [
             {
