@@ -5,7 +5,6 @@ function MetroGroups(selector, configs) {
     const config=this.mergeDefaultConfigWithLocalStorage() || configs;   // 如果有本地数据就读本地的
     this.groups = config.groups;
     this.options = config.options;
-
     this.init();
 }
 
@@ -136,11 +135,14 @@ MetroGroups.prototype = {
             // handle: '.handle',
         })
 
-        $draggable.on('dragStart', function (e, pointer) {
+        $draggable.on('dragStart', function (e) {
             $(e.target).parents('.tile-wrapper').addClass('is-dragging');
         })
 
-        $draggable.on('dragEnd', function (e, pointer) {
+        $draggable.on('dragEnd', function (e) {
+            // 删除临时网格
+            this.$tempBlock.$ele.remove()
+            this.$tempBlock=null;
             // 恢复 拖拽状态 和 移动向量
             $('.tile-wrapper').removeClass('is-dragging');
             $(e.target).css({'left': 0, 'top': 0})
@@ -165,7 +167,7 @@ MetroGroups.prototype = {
 
             // 清空旧位置
             let oldGrids=this.getGridsInArea(tile.group,tile.row,tile.col,tile.row+tile.rowSpan,tile.col+tile.colSpan)
-            oldGrids.forEach(function (item,index,array) {
+            oldGrids.forEach(function (item) {
                 item.tile=null;
             })
 
@@ -176,7 +178,7 @@ MetroGroups.prototype = {
             tile.setTileAttr();
 
             // 填充新位置的 grid
-            newGrids.forEach(function (item,index,array) {
+            newGrids.forEach(function (item) {
                 item.tile=tile;
             })
             tile.freshConfigInGroup();
@@ -186,6 +188,45 @@ MetroGroups.prototype = {
             window.vector={
                 x:vector.x,
                 y:vector.y
+            }
+            // 获取当前拖拽位置的网格
+            let tileId=$(e.target).attr('data-tile-id');
+            let tile=this.tiles.filter(function (item) {return item.id===tileId});
+            if(tile.length)tile=tile[0];
+            else console.error('在 tile 中没找到这个 id : '+tileId,this.tiles);
+            let curRow=tile.row + Math.round(vector.y/this.options.gridWidth);
+            let curCol=tile.col + Math.round(vector.x/this.options.gridWidth);
+
+            // 判断出界
+            if(curRow<=0 || curCol<=0 || curRow+tile.rowSpan > tile.group.size.row+1 || curCol+tile.colSpan > tile.group.size.col+1)
+                return console.log('出界',curRow,curCol,curRow+tile.rowSpan,curCol+tile.colSpan);
+
+            // 当前拖拽所在网格
+
+            let newGrids=this.getGridsInArea(tile.group,curRow,curCol,curRow+tile.rowSpan,curCol+tile.colSpan)
+            let isUsed=false;
+            if(newGrids.some(function (item) {
+                    return item.tile!==null && item.tile!==tile;
+                }))isUsed=true;
+            if(this.$tempBlock){
+                if(this.$tempBlock.row!==curRow || this.$tempBlock.col!==curCol){
+                    this.$tempBlock.row=curRow;
+                    this.$tempBlock.col=curCol;
+                    this.$tempBlock.setTileCss()
+                    this.$tempBlock.$ele.addClass('temp-tile');// '+isUsed?'used-tile':'available-tile').removeClass(!isUsed?'used-tile':'available-tile');
+                    this.$tempBlock.$ele.css({
+                        'background-color':isUsed?'rgba(250,0,0,0.5)':'rgba(0,250,0,0.5)'
+                    })
+                }
+            }else{
+                this.$tempBlock=new MetroTile({
+                    size: tile.size,
+                    row: curRow,
+                    col: curCol,
+                },-1,this,-1);         // 一个临时的磁贴
+                this.$tempBlock.$ele.empty();
+                tile.group.ele.find('.tile-wrapper').append(this.$tempBlock.$ele);
+                this.$tempBlock.$ele.addClass('temp-tile')
             }
         }.bind(this))
     },

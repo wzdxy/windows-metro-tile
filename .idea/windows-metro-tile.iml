@@ -11,5 +11,8 @@
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="draggabilly.pkgd" level="application" />
     <orderEntry type="library" name="jquery.contextMenu" level="application" />
+    <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="draggabilly.pkgd" level="application" />
+    <orderEntry type="library" name="jquery.contextMenu" level="application" />
   </component>
 </module>
